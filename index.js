@@ -10282,7 +10282,7 @@ function generatePage(pageName) {
         const page = {
             ...pageTemplate,
             title: generatePageName(pageNumber),
-            content: [hero_sections[0], pods_sections[0], txt_img_sections[0]].map(modifyIdOfTheSection)
+            content: [hero_sections[0].content[0], pods_sections[0].content[0], txt_img_sections[0].content[0]].map(modifyIdOfTheSection)
         }
 
         //document.getElementById('page').innerText = JSON.stringify(page);
