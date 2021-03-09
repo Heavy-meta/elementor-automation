@@ -10190,8 +10190,6 @@ let txt_img_sections = [
     }
 ]
 
-console.log("script loads");
-
 const idLength = 8;
 const alphabet = 'abcdefghijklmnopqrstuvwxyz1234567890';
 
@@ -10259,6 +10257,7 @@ function generateSections(heros, pods, texts) {
 
 generateSections(hero_sections, pods_sections, txt_img_sections);
 
+
 let pageNumber = 0;
 const pageTemplate = {
     "version": "0.4",
@@ -10273,29 +10272,32 @@ const pageTemplate = {
 document.getElementById("nextBtn").addEventListener("click", generatePage);
 
 function generatePage(pageName) {
-    let maxPageNumber = 5; //this sets a max amount of pages that you can generate
-
+    let maxPageNumber = 7; //this sets a max amount of pages that you can generate
     if (pageNumber < maxPageNumber) {
         pageNumber++;
         console.log (pageNumber);
 
+        // select same hero section as the page number, of no such section exists fall back to the first one
+        const heroIndex = pageNumber % hero_sections.length;
+        const hero = hero_sections[heroIndex].content;
+        const podsIndex = pageNumber % pods_sections.length;
+        const pods = pods_sections[podsIndex].content;
+        const txt_imgIndex = pageNumber % txt_img_sections.length;
+        const txt_img = txt_img_sections[txt_imgIndex].content;
+
         const page = {
             ...pageTemplate,
             title: generatePageName(pageNumber),
-            content: [hero_sections[0].content[0], pods_sections[0].content[0], txt_img_sections[0].content[0]].map(modifyIdOfTheSection)
+            content: [...hero, ...pods, ...txt_img].map(modifyIdOfTheElement) // here is where I want to deconstruct my section/element before making the page
+
         }
 
-        //document.getElementById('page').innerText = JSON.stringify(page);
-
         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(page));
-        // here it expects the link with this id to exists, I think you can just create it instead
-        // var dlAnchorElem = document.getElementById('downloadAnchorElem');
         const dlAnchorElem = document.createElement('a');
         dlAnchorElem.setAttribute("href",     dataStr     );
         dlAnchorElem.setAttribute("download", `${page.title}.json`);
-
-
         dlAnchorElem.click();
+
         return true;
     }
 
@@ -10309,5 +10311,3 @@ function generatePageName(pageNumber) {
     // to use variable it needs to be wrapped in ${}
     return `Page ${pageNumber.toString().padStart(2, '0')}`;
 }
-
-// console.log(generatePageName(1));
