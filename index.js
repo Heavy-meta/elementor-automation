@@ -10241,20 +10241,6 @@ function modifyIdOfTheSection(section) {
 }
 
 
-function generateSections(heros, pods, texts) {
-    // each argument is a list of sections, so we need to call modifyIdOfTheSection for them:
-    const newHeros = heros.map(modifyIdOfTheSection);
-    const newPods = pods.map(modifyIdOfTheSection);
-    const newTexts = texts.map(modifyIdOfTheSection);
-
-    document.getElementById('heros').innerText = JSON.stringify(newHeros);
-    document.getElementById('pods').innerText = JSON.stringify(newPods);
-    document.getElementById('texts').innerText = JSON.stringify(newTexts);
-}
-
-// generateSections(hero_sections, pods_sections, txt_img_sections);
-
-
 let pageNumber = 0;
 
 const pageTemplate = {
@@ -10267,15 +10253,6 @@ const pageTemplate = {
     }
 };
 
-const sectionTemplate = {
-    "version": "0.4",
-    "title": "sectionName",
-    "type": "section",
-    "content": [],
-    "page_settings": {
-        "hide_title": "yes"
-    }
-};
 
 
 
@@ -10362,25 +10339,3 @@ document.getElementById("nextBtn").addEventListener("click", () => {
     refresh();
     return true;
 });
-
-// here I want to create the second function for the single section generation -> tommorrow, too tired for today
-
-// document.getElementById("singleBtn").addEventListener("click", () => {
-//
-//         let contents = [];
-//         content.map(section => contents = contents.concat(section.content));
-//         const page = {
-//             ...pageTemplate,
-//             title: generatePageName(pageNumber),
-//             content: contents.map(modifyIdOfTheElement)
-//         }
-//
-//         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(page));
-//         const dlAnchorElem = document.createElement('a');
-//         dlAnchorElem.setAttribute("href", dataStr);
-//         dlAnchorElem.setAttribute("download", `${page.title}.json`);
-//         dlAnchorElem.click();
-//
-//         return true;
-//     }
-// });
