@@ -10190,6 +10190,7 @@ let txt_img_sections = [
     }
 ]
 
+
 const idLength = 8;
 const alphabet = 'abcdefghijklmnopqrstuvwxyz1234567890';
 
@@ -10200,11 +10201,9 @@ function generateId() {
         // -1 — due to array starts with 0, and last element has index (length - 1)
         id += alphabet[Math.floor(Math.random() * (alphabet.length - 1))];
     }
-
     return id;
 }
 
-//console.log(generateId());
 
 function modifyIdOfTheElement(element) {
     // generate new id
@@ -10232,7 +10231,6 @@ function modifyIdOfTheElement(element) {
     };
 }
 
-// console.log(JSON.stringify(modifyIdOfTheElement(hero_sections[0].content[0])));
 
 function modifyIdOfTheSection(section) {
     // section has content array, we need to call modifyIdOfTheElement for each
@@ -10249,16 +10247,16 @@ function generateSections(heros, pods, texts) {
     const newPods = pods.map(modifyIdOfTheSection);
     const newTexts = texts.map(modifyIdOfTheSection);
 
-    // and output somehow, depends on how you want to use it
     document.getElementById('heros').innerText = JSON.stringify(newHeros);
     document.getElementById('pods').innerText = JSON.stringify(newPods);
     document.getElementById('texts').innerText = JSON.stringify(newTexts);
 }
 
-generateSections(hero_sections, pods_sections, txt_img_sections);
+// generateSections(hero_sections, pods_sections, txt_img_sections);
 
 
 let pageNumber = 0;
+
 const pageTemplate = {
     "version": "0.4",
     "title": "pageName",
@@ -10269,40 +10267,16 @@ const pageTemplate = {
     }
 };
 
-document.getElementById("nextBtn").addEventListener("click", generatePage);
-
-function generatePage(pageName) {
-    let maxPageNumber = 7; //this sets a max amount of pages that you can generate
-    if (pageNumber < maxPageNumber) {
-        pageNumber++;
-        console.log (pageNumber);
-
-        // select same hero section as the page number, of no such section exists fall back to the first one
-        const heroIndex = pageNumber % hero_sections.length;
-        const hero = hero_sections[heroIndex].content;
-        const podsIndex = pageNumber % pods_sections.length;
-        const pods = pods_sections[podsIndex].content;
-        const txt_imgIndex = pageNumber % txt_img_sections.length;
-        const txt_img = txt_img_sections[txt_imgIndex].content;
-
-        const page = {
-            ...pageTemplate,
-            title: generatePageName(pageNumber),
-            content: [...hero, ...pods, ...txt_img].map(modifyIdOfTheElement) // here is where I want to deconstruct my section/element before making the page
-
-        }
-
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(page));
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href",     dataStr     );
-        dlAnchorElem.setAttribute("download", `${page.title}.json`);
-        dlAnchorElem.click();
-
-        return true;
+const sectionTemplate = {
+    "version": "0.4",
+    "title": "sectionName",
+    "type": "section",
+    "content": [],
+    "page_settings": {
+        "hide_title": "yes"
     }
+};
 
-
-}
 
 
 function generatePageName(pageNumber) {
@@ -10311,3 +10285,102 @@ function generatePageName(pageNumber) {
     // to use variable it needs to be wrapped in ${}
     return `Page ${pageNumber.toString().padStart(2, '0')}`;
 }
+
+// page builder UI
+
+function setSections(id, sections) {
+    const selectHero = document.getElementById(id);
+
+    sections.map(
+        (section, index) => {
+            const option = document.createElement('option');
+            option.setAttribute('value', index);
+            option.innerText = section.title;
+
+            selectHero.appendChild(option);
+        }
+    );
+}
+
+setSections('heros', hero_sections);
+setSections('pods', pods_sections);
+setSections('text-img', txt_img_sections);
+
+let content = [];
+
+document.getElementById("addHerosButton").addEventListener("click", function() {
+    const index = document.getElementById("heros").value;
+    content.push(hero_sections[index]);
+    refresh();
+});
+
+document.getElementById("addPodsButton").addEventListener("click", function() {
+    const index = document.getElementById("pods").value;
+    content.push(pods_sections[index]);
+    refresh();
+});
+
+document.getElementById("addTextImgButton").addEventListener("click", function() {
+    const index = document.getElementById("text-img").value;
+    content.push(txt_img_sections[index]);
+    refresh();
+});
+
+//preview function for the sections selected
+const preview = document.getElementById("preview");
+function refresh() {
+    preview.innerText = '';
+    content.map(section => {
+        preview.innerText += `${section.title}\n`;
+    });
+}
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+    if (content.length <= 1) {
+        alert ('You forgot to add sections to the page! More than one need to be selected');
+        return true;
+        // true should be fine, so it doesn't push click event somewhere else
+    }
+
+    let contents = [];
+    content.map(section => contents = contents.concat(section.content));
+    pageNumber++;
+    const page = {
+        ...pageTemplate,
+        title: generatePageName(pageNumber),
+        content: contents.map(modifyIdOfTheElement)
+    }
+
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(page));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `${page.title}.json`);
+    dlAnchorElem.click();
+
+    contents.splice();
+    content = [];
+    refresh();
+    return true;
+});
+
+// here I want to create the second function for the single section generation -> tommorrow, too tired for today
+
+// document.getElementById("singleBtn").addEventListener("click", () => {
+//
+//         let contents = [];
+//         content.map(section => contents = contents.concat(section.content));
+//         const page = {
+//             ...pageTemplate,
+//             title: generatePageName(pageNumber),
+//             content: contents.map(modifyIdOfTheElement)
+//         }
+//
+//         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(page));
+//         const dlAnchorElem = document.createElement('a');
+//         dlAnchorElem.setAttribute("href", dataStr);
+//         dlAnchorElem.setAttribute("download", `${page.title}.json`);
+//         dlAnchorElem.click();
+//
+//         return true;
+//     }
+// });

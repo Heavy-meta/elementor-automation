@@ -5,11 +5,7 @@
     <title>Test automation</title>
 
     <style>
-        .nextBtn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-
+        .btn {
             padding: 14px 20px;
             font-size: 14px;
             text-transform: uppercase;
@@ -22,19 +18,43 @@
             overflow: hidden;
         }
 
-        .nextBtn:hover, .nextBtn:active, .nextBtn:focus {
+        .btn:hover, .btn:active, .btn:focus {
             background: #1047b5;
+        }
+
+
+        .nextBtn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .singleBtn {
+            position: absolute;
+            bottom: 20px;
+            left: 220px;
         }
 
     </style>
 </head>
 <body>
-    <pre id="heros"></pre>
-    <pre id="pods"></pre>
-    <pre id="texts"></pre>
     <pre id="page"></pre>
-    <button type="button" class="nextBtn" id="nextBtn">Next Page</button>
+    <div class="component">
+        <select name="heros" id="heros"></select>
+        <button class="btn" type="button" id="addHerosButton">Add section</button>
+    </div>
+    <div class="compenent">
+        <select name="pods" id="pods"></select>
+        <button class="btn" type="button" id="addPodsButton">Add section</button>
+    </div>
+    <div class="compenent">
+        <select name="text-img" id="text-img"></select>
+        <button class="btn" type="button" id="addTextImgButton">Add section</button>
+    </div>
+    <pre id="preview"></pre>
+    <button type="button" class="btn singleBtn" id="generateBtn">Generate single page</button>
+    <button type="button" class="btn nextBtn" id="nextBtn">Next Page</button>
 
-    <script src="index.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
